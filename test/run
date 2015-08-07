@@ -1,0 +1,84 @@
+#!/usr/bin/env node
+
+var fs = require('fs'),
+	exec = require('child_process').exec,
+	resolve = require('path').resolve,
+	child;
+
+function collectFiles(path, rx) {
+	
+	var f = '';
+	var files = [];
+	var items = fs.readdirSync(path);
+	
+	for (var i=0; i < items.length; i++) {
+		f = path+'/'+items[i];
+		
+		if (fs.statSync(f).isFile()) {
+
+			if ( rx ) {
+				if ( rx.test(f) ) {
+					files.push(f);	
+				}
+			} else {
+				files.push(f);
+			}
+						
+		} else {
+			files = files.concat(collectFiles(f, rx))
+		}
+	}	
+	
+	return files || [];
+}
+
+
+var files = collectFiles('.', /\.js/i),
+	passedCount = 0,
+	failedCount = 0,
+	failed = [],
+	passed = [];
+
+console.log('Running '+files.length+' tests...');
+
+function runTest() {
+
+	if ( !files.length ) {
+		console.log('Passed: '+passedCount);
+		console.log('Failed: '+failedCount);
+		failed.forEach(function(f){
+			console.log('\t- '+f);
+		});
+		return;
+	}
+
+	var script = files.shift();
+
+	//console.log('> node '+script);
+
+	child = exec('node '+script,
+	  function (error, stdout, stderr) {
+	    //console.log('stdout: ' + stdout);
+	    //console.log('stderr: ' + stderr);
+
+	    if (error !== null) {
+	    	failedCount += 1;
+	    	failed.push(script);
+	      //console.log('exec error: ' + error);
+	      //console.log('exec error: ' + error.stack);
+	    } else {
+	    	if ( stderr != '' ) {
+	    		failedCount +=1;
+	    		failed.push(script);
+	    	} else {
+	    		passedCount +=1;
+	    		passed.push(script);
+	    	}
+	    }
+
+	    runTest();
+	});	
+}
+
+runTest();
+

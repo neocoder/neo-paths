@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "name": "pathsjs",
+  "description": "JS Object traversal and modification tools",
+  "version": "0.0.1",
+  "author": {
+    "name": "Alex Ladyga",
+    "email": "neocoder@gmail.com"
+  },
+  "keywords": [
+    "object",
+    "paths",
+    "traversing",
+    "modification"
+  ],
+  "devDependencies": {
+    "mocha": "^1.21.0"
+  },
+  "main": "./index.js",
+  "engines": {
+    "node": ">=0.6.19"
+  }
+}
