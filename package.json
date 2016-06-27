@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "pathsjs",
+  "name": "neo-paths",
   "description": "JS Object traversal and modification tools",
   "version": "0.0.1",
   "author": {
